@@ -1,15 +1,4 @@
-const EVENT_TYPES = [
-  `Check`,
-  `Sightseeing`,
-  `Restaurant`,
-  `Taxi`,
-  `Bus`,
-  `Train`,
-  `Ship`,
-  `Transport`,
-  `Drive`,
-  `Flight`
-];
+import {EVENT_TYPES} from '../const.js';
 
 const TOWNS = [
   `Moscow`,
@@ -110,8 +99,15 @@ const getServices = () => {
 
 export const generateEvent = () => {
   const startDate = getRandomDate();
+  const temp = getRandomNumber(2);
+  let type = null;
+  if (temp === 0) {
+    type = getRandomElementFromArray(EVENT_TYPES.place);
+  } else {
+    type = getRandomElementFromArray(EVENT_TYPES.moving);
+  }
   return {
-    eventType: getRandomElementFromArray(EVENT_TYPES),
+    type,
     town: getRandomElementFromArray(TOWNS),
     photo: getPOIPhotoURL(),
     description: getDescription(),

@@ -7,6 +7,7 @@ import {createDayTemplate} from './components/day.js';
 import {createEventTemplate} from './components/event.js';
 import {createEventEditTemplate} from './components/event-edit.js';
 import {render} from './utils.js';
+import {generateEvent, generateEvents} from './mockup/event.js';
 
 const tripInfoHeader = document.querySelector(`.trip-main`);
 const controlsElement = tripInfoHeader.querySelector(`.trip-main__trip-controls`);
@@ -24,7 +25,8 @@ const daysListElement = boardElement.querySelector(`.trip-days`);
 render(daysListElement, createDayTemplate(), `beforeend`);
 const dayElement = daysListElement.querySelector(`.trip-events__list`);
 for (let j = 0; j < 3; j++) {
-  render(dayElement, createEventTemplate(), `beforeend`);
+  const event = generateEvent();
+  render(dayElement, createEventTemplate(event), `beforeend`);
 }
 
 render(daysListElement, createEventEditTemplate(), `afterbegin`);
