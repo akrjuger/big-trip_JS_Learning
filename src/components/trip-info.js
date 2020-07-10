@@ -1,3 +1,4 @@
+import AbstractComponent from './abstract-component.js';
 import {getMonthShortName} from '../utils/common.js';
 
 const MAX_TOWNS_NAMES = 3;
@@ -35,7 +36,7 @@ const getTotalPrice = (events) => {
 };
 
 
-export const createTripInfoTemplate = (events = []) => {
+const createTripInfoTemplate = (events) => {
   return (
     `<section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
@@ -50,3 +51,14 @@ export const createTripInfoTemplate = (events = []) => {
     </section>`
   );
 };
+
+export default class TripInfoComponent extends AbstractComponent {
+  constructor(events) {
+    super();
+    this._events = events;
+  }
+
+  getTemplate() {
+    return createTripInfoTemplate(this._events);
+  }
+}

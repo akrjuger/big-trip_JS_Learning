@@ -1,3 +1,4 @@
+import AbstractComponent from './abstract-component.js';
 import {EVENT_ICONS} from '../const.js';
 import {getEventTitle} from '../utils/events.js';
 
@@ -25,7 +26,7 @@ const getDurationMarkup = (event) => {
   );
 };
 
-export const createEventTemplate = (event) => {
+const createEventTemplate = (event) => {
   const eventIcon = `img/icons/${EVENT_ICONS[event.type]}`.toLowerCase();
   const eventTitle = getEventTitle(event) + ` ${event.town}`;
   const startTime = `${getStringForTime(event.startDate.getHours())}:${getStringForTime(event.startDate.getMinutes())}`;
@@ -67,3 +68,14 @@ export const createEventTemplate = (event) => {
     </li>`
   );
 };
+
+export default class EventComponent extends AbstractComponent {
+  constructor(event) {
+    super();
+    this._event = event;
+  }
+
+  getTemplate() {
+    return createEventTemplate(this._event);
+  }
+}

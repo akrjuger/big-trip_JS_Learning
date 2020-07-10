@@ -1,3 +1,4 @@
+import AbstractComponent from './abstract-component.js';
 import {EVENT_TYPES, EVENT_ICONS} from '../const.js';
 import {TOWNS, SERVICES} from '../mockup/event.js';
 import {getEventTitle} from '../utils/events.js';
@@ -52,7 +53,7 @@ const createDestinationMarkup = (event) => {
   );
 };
 
-export const createEventEditTemplate = (event) => {
+const createEventEditTemplate = (event) => {
   const placeTypesMarkup = EVENT_TYPES.place.map((type) => createTypeMarkup(type)).join(`\n`);
   const movingTypesMarkup = EVENT_TYPES.moving.map((type) => createTypeMarkup(type)).join(`\n`);
   const townsOptionMarkup = TOWNS.map((town) => createTownOptionMarkup(town)).join(`\n`);
@@ -130,3 +131,14 @@ export const createEventEditTemplate = (event) => {
     </form>`
   );
 };
+
+export default class EventEditComponent extends AbstractComponent {
+  constructor(event) {
+    super();
+    this._event = event;
+  }
+
+  getTemplate() {
+    return createEventEditTemplate(this._event);
+  }
+}

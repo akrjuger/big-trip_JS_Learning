@@ -1,5 +1,6 @@
 export const getMonthShortName = (date) => {
-  return date.toString().slice(4, 7).toUpperCase();
+  // return date.toString().slice(4, 7).toUpperCase();
+  return date.toLocaleDateString(`en-US`, {month: `short`}).toUpperCase();
 };
 
 export const getDateAndTimeFormatString = (date) => {

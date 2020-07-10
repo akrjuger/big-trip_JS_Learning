@@ -1,4 +1,6 @@
-export const createSortingTemplate = () => {
+import AbstractComponent from './abstract-component.js';
+
+const createSortingTemplate = () => {
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       <span class="trip-sort__item  trip-sort__item--day">Day</span>
@@ -32,3 +34,9 @@ export const createSortingTemplate = () => {
     </form>`
   );
 };
+
+export default class SortingComponent extends AbstractComponent {
+  getTemplate() {
+    return createSortingTemplate();
+  }
+}

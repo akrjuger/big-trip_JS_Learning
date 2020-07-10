@@ -1,3 +1,4 @@
+import AbstractComponent from './abstract-component.js';
 
 const createFilterMarkup = (filter, isChecked) => {
   return (
@@ -9,7 +10,7 @@ const createFilterMarkup = (filter, isChecked) => {
 };
 
 
-export const createFiltersTemplate = (filters = []) => {
+const createFiltersTemplate = (filters = []) => {
   const filtersMarkup = filters.map((filter, i) => createFilterMarkup(filter, i === 0)).join(`\n`);
   return (
     `<form class="trip-filters" action="#" method="get">
@@ -18,3 +19,14 @@ export const createFiltersTemplate = (filters = []) => {
     </form>`
   );
 };
+
+export default class FiltersComponent extends AbstractComponent {
+  constructor(filters) {
+    super();
+    this._filters = filters;
+  }
+
+  getTemplate() {
+    return createFiltersTemplate(this._filters);
+  }
+}
