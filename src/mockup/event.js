@@ -1,6 +1,6 @@
 import {EVENT_TYPES} from '../const.js';
 
-const TOWNS = [
+export const TOWNS = [
   `Moscow`,
   `Saint-Petersburg`,
   `Bratislava`,
@@ -22,7 +22,7 @@ const DESCRIPTION_ITEMS = [
   `In rutrum ac purus sit amet tempus.`
 ];
 
-const SERVICES = [
+export const SERVICES = [
   {
     type: `luggage`,
     title: `Add luggage`,
@@ -80,6 +80,7 @@ const getDescription = () => {
 const getRandomDate = () => {
   const date = new Date();
   date.setDate(date.getDate() - 4 + getRandomNumber(8));
+  date.setHours(date.getHours() - 5 + getRandomNumber(8));
   return date;
 };
 
@@ -97,6 +98,15 @@ const getServices = () => {
   return result;
 };
 
+const getPhotos = () => {
+  const quantity = getRandomNumber(10, 2);
+  const result = [];
+  for (let i = 0; i < quantity; i++) {
+    result.push(getPOIPhotoURL());
+  }
+  return result;
+};
+
 export const generateEvent = () => {
   const startDate = getRandomDate();
   const temp = getRandomNumber(2);
@@ -109,7 +119,7 @@ export const generateEvent = () => {
   return {
     type,
     town: getRandomElementFromArray(TOWNS),
-    photo: getPOIPhotoURL(),
+    photos: getPhotos(),
     description: getDescription(),
     startDate,
     endDate: getDateEnd(startDate),
