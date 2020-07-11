@@ -37,13 +37,14 @@ const getTotalPrice = (events) => {
 
 
 const createTripInfoTemplate = (events) => {
+  const isEvents = events.length !== 0;
   return (
     `<section class="trip-main__trip-info  trip-info">
-      <div class="trip-info__main">
+    ${isEvents ? `<div class="trip-info__main">
         <h1 class="trip-info__title">${getTripTownsMarkup(events)}</h1>
 
         <p class="trip-info__dates">${getTripDatesMarkup(events)}</p>
-      </div>
+      </div>` : ``}
 
       <p class="trip-info__cost">
         Total: &euro;&nbsp;<span class="trip-info__cost-value">${getTotalPrice(events)}</span>
