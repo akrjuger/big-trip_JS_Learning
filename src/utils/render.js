@@ -5,7 +5,8 @@ export const createElement = (template) => {
   return element.firstChild;
 };
 
-export const renderElement = (container, template, place) => {
+export const renderElement = (container, component, place) => {
+  const template = component.getElement();
   switch (place) {
     case `afterbegin`:
       container.prepend(template);
@@ -15,10 +16,6 @@ export const renderElement = (container, template, place) => {
       break;
     default: return;
   }
-};
-
-export const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
 };
 
 export const replace = (newComponent, oldComponent) => {

@@ -14,7 +14,7 @@ import {generateFilters} from './mockup/filters.js';
 
 
 // event type should be a object not a String
-const EVENTS_COUNT = 0;
+const EVENTS_COUNT = 10;
 const events = sortEventsByDate(generateEvents(EVENTS_COUNT));
 
 // this should be not here create dataList from events it should be in controller or model
@@ -25,35 +25,35 @@ const tripInfoHeader = document.querySelector(`.trip-main`);
 const controlsElement = tripInfoHeader.querySelector(`.trip-main__trip-controls`);
 const boardElement = document.querySelector(`.trip-events`);
 
-renderElement(tripInfoHeader, new TripInfoComponent(events).getElement(), `afterbegin`);
-renderElement(controlsElement, new MenuComponent().getElement(), `afterbegin`);
+renderElement(tripInfoHeader, new TripInfoComponent(events), `afterbegin`);
+renderElement(controlsElement, new MenuComponent(), `afterbegin`);
 const filters = generateFilters();
-renderElement(controlsElement, new FiltersComponent(filters).getElement(), `beforeend`);
+renderElement(controlsElement, new FiltersComponent(filters), `beforeend`);
 
 const renderBoard = () => {
   const isEvents = events.length !== 0;
   if (!isEvents) {
-    renderElement(boardElement, new NoEventsComponent().getElement(), `beforeend`);
+    renderElement(boardElement, new NoEventsComponent(), `beforeend`);
     return;
   }
 
 
-  renderElement(boardElement, new SortingComponent().getElement(), `beforeend`);
-  renderElement(boardElement, new DaysListComponent().getElement(), `beforeend`);
+  renderElement(boardElement, new SortingComponent(), `beforeend`);
+  renderElement(boardElement, new DaysListComponent(), `beforeend`);
 
   const daysListElement = boardElement.querySelector(`.trip-days`);
 
   datesList.forEach((dateString, index) => {
     const date = new Date(dateString);
-    const dayElement = new DayComponent(date, index + 1).getElement();
+    const dayElement = new DayComponent(date, index + 1);
     // const dayElement = createElement(createDayTemplate(date, index + 1));
     renderElement(daysListElement, dayElement, `beforeend`);
-    const eventsDayElement = dayElement.querySelector(`.trip-events__list`);
+    const eventsDayElement = dayElement.getElement().querySelector(`.trip-events__list`);
     for (const event of events) {
       if (event.startDate.toDateString() === dateString) {
         const eventComponent = new EventComponent(event);
         const eventEditComponent = new EventEditComponent(event);
-        renderElement(eventsDayElement, eventComponent.getElement(), `beforeend`);
+        renderElement(eventsDayElement, eventComponent, `beforeend`);
 
         //  logic for replacing one component on another
         const replaceEditComponent = () => {
@@ -67,11 +67,13 @@ const renderBoard = () => {
             replaceEditComponent();
           }
         };
-        eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+        // eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+        eventComponent.setEditHandler(() => {
           replace(eventEditComponent, eventComponent);
           document.addEventListener(`keydown`, escHandler);
         });
-        eventEditComponent.getElement().addEventListener(`submit`, (evt) => {
+        // eventEditComponent.getElement().addEventListener(`submit`, (evt) => {
+        eventEditComponent.setSubmitHandler((evt) => {
           evt.preventDefault();
           replaceEditComponent();
         });
