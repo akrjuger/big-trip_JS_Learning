@@ -1,14 +1,12 @@
 import AbstractComponent from './abstract-component.js';
 import {getMonthShortName} from '../utils/common.js';
 
-const createDayTemplate = (date, dayCounter) => {
-  const day = date.getDate();
-
+const createDayTemplate = (date = null, dayCounter = ``) => {
   return (
     `<li class="trip-days__item  day">
       <div class="day__info">
          <span class="day__counter">${dayCounter}</span>
-         <time class="day__date" datetime="${date.toLocaleDateString().split(`.`).join(`-`)}">${getMonthShortName(date)} ${day}</time>
+         <time class="day__date" datetime="${date ? date.toLocaleDateString().split(`.`).join(`-`) : ``}">${date ? (getMonthShortName(date) + ` ` + date.getDate()) : ``}</time>
       </div>
         <ul class="trip-events__list">
         </ul>

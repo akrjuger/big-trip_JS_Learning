@@ -27,6 +27,7 @@ export const EVENT_ICONS = {
   'Flight': `flight.png`
 };
 
+export const HIDDEN_CLASS = `visually-hidden`;
 // but it should be like so
 // const eventTypes = [
 //   {

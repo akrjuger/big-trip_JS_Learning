@@ -11,4 +11,8 @@ export default class DaysListComponent extends AbstractComponent {
   getTemplate() {
     return createDaysListTemplate();
   }
+
+  clearList() {
+    this.getElement().innerHTML = ``;
+  }
 }
