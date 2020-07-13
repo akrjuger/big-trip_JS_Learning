@@ -21,5 +21,5 @@ renderElement(controlsElement, new MenuComponent(), `afterbegin`);
 const filters = generateFilters();
 renderElement(controlsElement, new FiltersComponent(filters), `beforeend`);
 
-const tripController = new TripController(boardElement, events);
-tripController.render();
+const tripController = new TripController(boardElement);
+tripController.render(events);

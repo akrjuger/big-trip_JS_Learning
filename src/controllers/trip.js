@@ -2,38 +2,8 @@ import NoEventsComponent from '../components/no-events.js';
 import SortingComponent, {SortType} from '../components/sort.js';
 import DaysListComponent from '../components/days-list.js';
 import DayComponent from '../components/day.js';
-import EventComponent from '../components/event.js';
-import EventEditComponent from '../components/event-edit.js';
-import {renderElement, replace} from '../utils/render.js';
-
-const renderEvent = (event, container) => {
-  const eventComponent = new EventComponent(event);
-  const eventEditComponent = new EventEditComponent(event);
-  renderElement(container, eventComponent, `beforeend`);
-
-  //  logic for replacing one component on another
-  const replaceEditComponent = () => {
-    replace(eventComponent, eventEditComponent);
-    document.removeEventListener(`keydown`, escHandler);
-  };
-
-  const escHandler = (evt) => {
-    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-    if (isEscKey) {
-      replaceEditComponent();
-    }
-  };
-
-  eventComponent.setEditHandler(() => {
-    replace(eventEditComponent, eventComponent);
-    document.addEventListener(`keydown`, escHandler);
-  });
-
-  eventEditComponent.setSubmitHandler((evt) => {
-    evt.preventDefault();
-    replaceEditComponent();
-  });
-};
+import EventController from './event.js';
+import {renderElement} from '../utils/render.js';
 
 const getSortedEvents = (events, sortType) => {
   let sortedEvents = events.slice();
@@ -54,16 +24,17 @@ const getSortedEvents = (events, sortType) => {
 
 
 export default class TripController {
-  constructor(container, events) {
+  constructor(container) {
     this._container = container;
-    this._events = events;
+    this._events = null;
 
     this._sortingComponent = new SortingComponent();
     this._daysListComponent = new DaysListComponent();
     this._noEventsComponent = new NoEventsComponent();
   }
 
-  render() {
+  render(events) {
+    this._events = events;
     const isEvents = this._events.length !== 0;
     if (!isEvents) {
       renderElement(this._container, this._noEventsComponent, `beforeend`);
@@ -88,9 +59,9 @@ export default class TripController {
       const dayElement = new DayComponent();
       renderElement(this._daysListComponent.getElement(), dayElement, `beforeend`);
       const eventsDayElement = dayElement.getElement().querySelector(`.trip-events__list`);
-
       for (const event of sortedEvents) {
-        renderEvent(event, eventsDayElement);
+        const eventController = new EventController(eventsDayElement);
+        eventController.render(event);
       }
     });
   }
@@ -106,7 +77,8 @@ export default class TripController {
       // ****************
       for (const event of this._events) {
         if (event.startDate.toDateString() === dateString) {
-          renderEvent(event, eventsDayElement);
+          const eventController = new EventController(eventsDayElement);
+          eventController.render(event);
         }
       }
     });
