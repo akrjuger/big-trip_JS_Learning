@@ -26,11 +26,14 @@ const getSortedEvents = (events, sortType) => {
 export default class TripController {
   constructor(container) {
     this._container = container;
-    this._events = null;
+    this._events = [];
 
     this._sortingComponent = new SortingComponent();
     this._daysListComponent = new DaysListComponent();
     this._noEventsComponent = new NoEventsComponent();
+
+    this._onSortTypeChange = this._onSortTypeChange.bind(this);
+    this._sortingComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
   render(events) {
@@ -45,25 +48,6 @@ export default class TripController {
     renderElement(this._container, this._daysListComponent, `beforeend`);
 
     this._renderEventWithDates();
-
-    this._sortingComponent.setSortTypeChangeHandler((sortType) =>{
-      this._daysListComponent.clearList();
-
-      if (sortType === SortType.DEFAULT) {
-        this._renderEventWithDates();
-        return;
-      }
-      const sortedEvents = getSortedEvents(this._events, sortType);
-
-      this._sortingComponent.hideDayTitle();
-      const dayElement = new DayComponent();
-      renderElement(this._daysListComponent.getElement(), dayElement, `beforeend`);
-      const eventsDayElement = dayElement.getElement().querySelector(`.trip-events__list`);
-      for (const event of sortedEvents) {
-        const eventController = new EventController(eventsDayElement);
-        eventController.render(event);
-      }
-    });
   }
 
   _renderEventWithDates() {
@@ -82,5 +66,24 @@ export default class TripController {
         }
       }
     });
+  }
+
+  _onSortTypeChange(sortType) {
+    this._daysListComponent.clearList();
+
+    if (sortType === SortType.DEFAULT) {
+      this._renderEventWithDates();
+      return;
+    }
+    const sortedEvents = getSortedEvents(this._events, sortType);
+
+    this._sortingComponent.hideDayTitle();
+    const dayElement = new DayComponent();
+    renderElement(this._daysListComponent.getElement(), dayElement, `beforeend`);
+    const eventsDayElement = dayElement.getElement().querySelector(`.trip-events__list`);
+    for (const event of sortedEvents) {
+      const eventController = new EventController(eventsDayElement);
+      eventController.render(event);
+    }
   }
 }
