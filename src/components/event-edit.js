@@ -1,4 +1,4 @@
-import AbstractComponent from './abstract-component.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
 import {EVENT_TYPES, EVENT_ICONS} from '../const.js';
 import {TOWNS, SERVICES} from '../mockup/event.js';
 import {getEventTitle} from '../utils/events.js';
@@ -132,10 +132,12 @@ const createEventEditTemplate = (event) => {
   );
 };
 
-export default class EventEditComponent extends AbstractComponent {
+export default class EventEditComponent extends AbstractSmartComponent {
   constructor(event) {
     super();
     this._event = event;
+    this._setTypeChangeHandler = this._setTypeChangeHandler.bind(this);
+    this._setTypeChangeHandler();
   }
 
   getTemplate() {
@@ -144,5 +146,25 @@ export default class EventEditComponent extends AbstractComponent {
 
   setSubmitHandler(handler) {
     this.getElement().addEventListener(`submit`, handler);
+  }
+
+  recoveryListeners() {
+    this._setTypeChangeHandler();
+  }
+
+  _setTypeChangeHandler() {
+    this.getElement().querySelector(`.event__type-list`).addEventListener(`click`, (evt) => {
+      if (evt.target.nodeName !== `LABEL`) {
+        return;
+      }
+      const selectedType = evt.target.innerText;
+      if (this._event.type === selectedType) {
+        return;
+      }
+
+      this._event.type = selectedType;
+
+      this.rerender();
+    });
   }
 }
