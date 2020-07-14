@@ -137,7 +137,8 @@ export default class EventEditComponent extends AbstractSmartComponent {
     super();
     this._event = event;
     this._setTypeChangeHandler = this._setTypeChangeHandler.bind(this);
-    this._setTypeChangeHandler();
+    this._setTownChangeHandler = this._setTownChangeHandler.bind(this);
+    this.recoveryListeners();
   }
 
   getTemplate() {
@@ -150,6 +151,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
   recoveryListeners() {
     this._setTypeChangeHandler();
+    this._setTownChangeHandler();
   }
 
   _setTypeChangeHandler() {
@@ -167,4 +169,13 @@ export default class EventEditComponent extends AbstractSmartComponent {
       this.rerender();
     });
   }
+
+  _setTownChangeHandler() {
+    const townInput = this.getElement().querySelector(`.event__input--destination`);
+    townInput.addEventListener(`change`, () => {
+      this._event.town = townInput.value;
+      this.rerender();
+    });
+  }
+
 }
