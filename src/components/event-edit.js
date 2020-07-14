@@ -3,6 +3,9 @@ import {EVENT_TYPES, EVENT_ICONS} from '../const.js';
 import {TOWNS, SERVICES} from '../mockup/event.js';
 import {getEventTitle} from '../utils/events.js';
 import {getDateAndTimeFormatString} from '../utils/common.js';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 const createTypeMarkup = (type) => {
   return (
@@ -137,11 +140,13 @@ export default class EventEditComponent extends AbstractSmartComponent {
     super();
     this._event = event;
 
+    this._flatpickr = [];
     this._submitHandler = null;
     this._setTypeChangeHandler = this._setTypeChangeHandler.bind(this);
     this._setTownChangeHandler = this._setTownChangeHandler.bind(this);
     this.setSubmitHandler = this.setSubmitHandler.bind(this);
     this._subscribeOnEvents();
+    this._applyFlatpickr();
   }
 
   getTemplate() {
@@ -187,4 +192,21 @@ export default class EventEditComponent extends AbstractSmartComponent {
     });
   }
 
+  _applyFlatpickr() {
+    if (this._flatpickr.length > 0) {
+      this._flatpickr.forEach((item) => item.destroy());
+      this._flatpickr = [];
+    }
+
+    const datesInput = Array.from(this.getElement().querySelectorAll(`.event__input--time`));
+    this._flatpickr = datesInput.map((dateInput) => {
+      return flatpickr(dateInput, {
+        altInput: true,
+        allowInput: true,
+        enableTime: true,
+        // time_24hr: true,
+        defaultDate: this._event.startDate
+      });
+    });
+  }
 }
