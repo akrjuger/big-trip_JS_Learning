@@ -136,9 +136,12 @@ export default class EventEditComponent extends AbstractSmartComponent {
   constructor(event) {
     super();
     this._event = event;
+
+    this._submitHandler = null;
     this._setTypeChangeHandler = this._setTypeChangeHandler.bind(this);
     this._setTownChangeHandler = this._setTownChangeHandler.bind(this);
-    this.recoveryListeners();
+    this.setSubmitHandler = this.setSubmitHandler.bind(this);
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
@@ -147,9 +150,15 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
   setSubmitHandler(handler) {
     this.getElement().addEventListener(`submit`, handler);
+    this._submitHandler = handler;
   }
 
   recoveryListeners() {
+    this._subscribeOnEvents();
+    this.setSubmitHandler(this._submitHandler);
+  }
+
+  _subscribeOnEvents() {
     this._setTypeChangeHandler();
     this._setTownChangeHandler();
   }

@@ -28,11 +28,14 @@ export default class TripController {
     this._container = container;
     this._events = [];
 
+    this._eventsContollers = [];
+
     this._sortingComponent = new SortingComponent();
     this._daysListComponent = new DaysListComponent();
     this._noEventsComponent = new NoEventsComponent();
 
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
+    this._onViewChange = this._onViewChange.bind(this);
     this._sortingComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
@@ -61,8 +64,9 @@ export default class TripController {
       // ****************
       for (const event of this._events) {
         if (event.startDate.toDateString() === dateString) {
-          const eventController = new EventController(eventsDayElement);
+          const eventController = new EventController(eventsDayElement, this._onViewChange);
           eventController.render(event);
+          this._eventsContollers.push(eventController);
         }
       }
     });
@@ -84,6 +88,11 @@ export default class TripController {
     for (const event of sortedEvents) {
       const eventController = new EventController(eventsDayElement);
       eventController.render(event);
+      this._eventsContollers.push(eventController);
     }
+  }
+
+  _onViewChange() {
+    this._eventsContollers.forEach((eventController) => eventController.setDefaultView());
   }
 }
