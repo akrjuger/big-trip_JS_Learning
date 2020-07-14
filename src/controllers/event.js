@@ -14,7 +14,7 @@ export default class EventController {
     this._eventEditComponent = null;
     this._mode = Mode.DEFAULT;
     this._onViewChange = onViewChange;
-
+    this._escHandler = this._escHandler.bind(this);
     // this._replaceEditComponent = this._replaceEditComponent.bind(this);
 
   }

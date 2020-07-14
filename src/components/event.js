@@ -1,6 +1,7 @@
 import AbstractComponent from './abstract-component.js';
 import {EVENT_ICONS} from '../const.js';
 import {getEventTitle} from '../utils/events.js';
+// import moment from 'moment';
 
 const getStringForTime = (data) => {
   return (`0` + data).slice(-2);
@@ -18,11 +19,13 @@ const getOfferMarkup = (offer) => {
 
 const getDurationMarkup = (event) => {
   const durationTime = new Date(event.endDate - event.startDate);
+  // const durationTime = moment.duration(event.endDate.getTime() - event.startDate.getTime()).get();
   const durationDays = durationTime.getUTCDate() - 1;
   const durationHours = durationTime.getUTCHours();
   const durationMinutes = durationTime.getUTCMinutes();
   return (
     `${durationDays > 0 ? `${getStringForTime(durationDays)}D ` : ``}${durationHours > 0 ? `${getStringForTime(durationHours)}H ` : ``}${getStringForTime(durationMinutes)}M`
+    // `${durationTime}`
   );
 };
 

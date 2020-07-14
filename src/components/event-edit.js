@@ -2,7 +2,7 @@ import AbstractSmartComponent from './abstract-smart-component.js';
 import {EVENT_TYPES, EVENT_ICONS} from '../const.js';
 import {TOWNS, SERVICES} from '../mockup/event.js';
 import {getEventTitle} from '../utils/events.js';
-import {getDateAndTimeFormatString} from '../utils/common.js';
+import {getDateAndTimeFormatString, getDateFromString} from '../utils/common.js';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
@@ -145,6 +145,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._setTypeChangeHandler = this._setTypeChangeHandler.bind(this);
     this._setTownChangeHandler = this._setTownChangeHandler.bind(this);
     this.setSubmitHandler = this.setSubmitHandler.bind(this);
+    this._applyFlatpickr = this._applyFlatpickr.bind(this);
     this._subscribeOnEvents();
     this._applyFlatpickr();
   }
@@ -161,6 +162,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
   recoveryListeners() {
     this._subscribeOnEvents();
     this.setSubmitHandler(this._submitHandler);
+    this._applyFlatpickr();
   }
 
   _subscribeOnEvents() {
@@ -192,20 +194,36 @@ export default class EventEditComponent extends AbstractSmartComponent {
     });
   }
 
+  rerender() {
+    super.rerender();
+  }
   _applyFlatpickr() {
-    if (this._flatpickr.length > 0) {
-      this._flatpickr.forEach((item) => item.destroy());
-      this._flatpickr = [];
-    }
+    // BUG in flatpickr!!!
+    // if (this._flatpickr.length > 0) {
+    //   this._flatpickr.forEach((item) => item.destroy());
+    //   this._flatpickr = [];
+    // }
 
     const datesInput = Array.from(this.getElement().querySelectorAll(`.event__input--time`));
-    this._flatpickr = datesInput.map((dateInput) => {
+    this._flatpickr = datesInput.map((dateInput, index) => {
       return flatpickr(dateInput, {
         altInput: true,
         allowInput: true,
         enableTime: true,
-        // time_24hr: true,
-        defaultDate: this._event.startDate
+        altFormat: `d/m/y H:i`,
+        dateFormat: `d/m/y H:i`,
+        onClose: (selectedDays, dateStr) => {
+          if (index === 0) {
+            this._event.startDate = getDateFromString(dateStr);
+            if (this._event.startDate > this._event.endDate) {
+              this._event.endDate = this._event.startDate;
+            }
+          } else {
+            this._event.endDate = getDateFromString(dateStr);
+          }
+
+          this.rerender();
+        }
       });
     });
   }
