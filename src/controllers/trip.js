@@ -24,9 +24,10 @@ const getSortedEvents = (events, sortType) => {
 
 
 export default class TripController {
-  constructor(container) {
+  constructor(container, eventsModel) {
     this._container = container;
-    this._events = [];
+    // this._events = [];
+    this._eventsModel = eventsModel;
 
     this._eventsContollers = [];
 
@@ -40,9 +41,9 @@ export default class TripController {
     this._sortingComponent.setSortTypeChangeHandler(this._onSortTypeChange);
   }
 
-  render(events) {
-    this._events = events;
-    const isEvents = this._events.length !== 0;
+  render() {
+    const events = this._eventsModel.getEvents();
+    const isEvents = events.length !== 0;
     if (!isEvents) {
       renderElement(this._container, this._noEventsComponent, `beforeend`);
       return;
@@ -55,7 +56,8 @@ export default class TripController {
   }
 
   _renderEventWithDates() {
-    const datesList = Array.from(new Set(this._events.map((event) => event.startDate.toDateString())));
+    const events = this._eventsModel.getEvents();
+    const datesList = Array.from(new Set(events.map((event) => event.startDate.toDateString())));
     this._sortingComponent.showDayTitle();
     datesList.forEach((dateString, index) => {
       const dayElement = new DayComponent(new Date(dateString), index + 1);
@@ -63,7 +65,7 @@ export default class TripController {
       renderElement(this._daysListComponent.getElement(), dayElement, `beforeend`);
       const eventsDayElement = dayElement.getElement().querySelector(`.trip-events__list`);
       // ****************
-      for (const event of this._events) {
+      for (const event of events) {
         if (event.startDate.toDateString() === dateString) {
           const eventController = new EventController(eventsDayElement, this._onDataChange, this._onViewChange);
           eventController.render(event);
@@ -80,7 +82,7 @@ export default class TripController {
       this._renderEventWithDates();
       return;
     }
-    const sortedEvents = getSortedEvents(this._events, sortType);
+    const sortedEvents = getSortedEvents(this._eventsModel.getEvents(), sortType);
 
     this._sortingComponent.hideDayTitle();
     const dayElement = new DayComponent();
@@ -98,14 +100,8 @@ export default class TripController {
   }
 
   _onDataChange(eventController, oldEvent, newEvent) {
-    const index = this._events.findIndex((it) => it === oldEvent);
+    this._eventsModel.updateEvent(oldEvent.id, newEvent);
 
-    if (index === -1) {
-      return;
-    }
-
-    this._events[index] = newEvent;
-
-    eventController.render(this._events[index]);
+    eventController.render(newEvent);
   }
 }

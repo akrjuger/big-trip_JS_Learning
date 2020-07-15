@@ -107,7 +107,7 @@ const getPhotos = () => {
   return result;
 };
 
-export const generateEvent = () => {
+const generateEvent = (id) => {
   const startDate = getRandomDate();
   const temp = getRandomNumber(2);
   let type = null;
@@ -117,6 +117,7 @@ export const generateEvent = () => {
     type = getRandomElementFromArray(EVENT_TYPES.moving);
   }
   return {
+    id,
     type,
     town: getRandomElementFromArray(TOWNS),
     photos: getPhotos(),
@@ -132,7 +133,7 @@ export const generateEvent = () => {
 export const generateEvents = (quantity) => {
   const result = [];
   for (let i = 0; i < quantity; i++) {
-    result.push(generateEvent());
+    result.push(generateEvent(i + 1));
   }
   return result;
 };
