@@ -1,6 +1,6 @@
 import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
-import {renderElement, replace} from '../utils/render.js';
+import {renderElement, replace, remove} from '../utils/render.js';
 
 const Mode = {
   DEFAULT: `default`,
@@ -70,5 +70,11 @@ export default class EventController {
     if (this._mode === Mode.EDIT) {
       this._replaceEditComponent();
     }
+  }
+
+  destroy() {
+    remove(this._eventComponent);
+    remove(this._eventEditComponent);
+    document.removeEventListener(`keydown`, this._escHandler);
   }
 }

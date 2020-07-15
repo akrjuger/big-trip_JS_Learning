@@ -3,7 +3,7 @@ import SortingComponent, {SortType} from '../components/sort.js';
 import DaysListComponent from '../components/days-list.js';
 import DayComponent from '../components/day.js';
 import EventController from './event.js';
-import {renderElement} from '../utils/render.js';
+import {renderElement, remove} from '../utils/render.js';
 
 const getSortedEvents = (events, sortType) => {
   let sortedEvents = events.slice();
@@ -38,7 +38,9 @@ export default class TripController {
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
-    this._sortingComponent.setSortTypeChangeHandler(this._onSortTypeChange);
+    this._onFilterChange = this._onFilterChange.bind(this);
+
+    this._eventsModel.setFilterChangeHandler(this._onFilterChange);
   }
 
   render() {
@@ -52,6 +54,7 @@ export default class TripController {
     renderElement(this._container, this._sortingComponent, `beforeend`);
     renderElement(this._container, this._daysListComponent, `beforeend`);
 
+    this._sortingComponent.setSortTypeChangeHandler(this._onSortTypeChange);
     this._renderEventWithDates();
   }
 
@@ -77,7 +80,6 @@ export default class TripController {
 
   _onSortTypeChange(sortType) {
     this._daysListComponent.clearList();
-
     if (sortType === SortType.DEFAULT) {
       this._renderEventWithDates();
       return;
@@ -103,5 +105,18 @@ export default class TripController {
     this._eventsModel.updateEvent(oldEvent.id, newEvent);
 
     eventController.render(newEvent);
+  }
+
+  _updateEvents() {
+    this._eventsContollers.forEach((eventController) => eventController.destroy());
+    this._eventsContollers = [];
+    remove(this._sortingComponent);
+    remove(this._daysListComponent);
+    remove(this._noEventsComponent);
+    this.render();
+  }
+
+  _onFilterChange() {
+    this._updateEvents();
   }
 }
