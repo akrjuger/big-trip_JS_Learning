@@ -1,12 +1,11 @@
 import TripInfoComponent from './components/trip-info.js';
 import MenuComponent from './components/menu.js';
-import FiltersComponent from './components/filters.js';
+import FiltersController from './controllers/filters.js';
 import TripController from './controllers/trip.js';
 import EventsModel from './models/events.js';
 import {renderElement} from './utils/render.js';
 import {sortEventsByDate} from './utils/events.js';
 import {generateEvents} from './mockup/event.js';
-import {generateFilters} from './mockup/filters.js';
 
 
 // event type should be a object not a String
@@ -22,8 +21,9 @@ const boardElement = document.querySelector(`.trip-events`);
 
 renderElement(tripInfoHeader, new TripInfoComponent(eventsModel), `afterbegin`);
 renderElement(controlsElement, new MenuComponent(), `afterbegin`);
-const filters = generateFilters();
-renderElement(controlsElement, new FiltersComponent(filters), `beforeend`);
+
+const filtersController = new FiltersController(controlsElement, eventsModel);
+filtersController.render();
 
 const tripController = new TripController(boardElement, eventsModel);
 tripController.render();
