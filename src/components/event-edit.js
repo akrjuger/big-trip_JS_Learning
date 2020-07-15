@@ -119,6 +119,19 @@ const createEventEditTemplate = (event) => {
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
         <button class="event__reset-btn" type="reset">Cancel</button>
+
+        <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${event.isFavorite ? `checked` : ``}>
+        <label class="event__favorite-btn" for="event-favorite-1">
+          <span class="visually-hidden">Add to favorite</span>
+          <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
+            <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
+          </svg>
+        </label>
+
+        <button class="event__rollup-btn" type="button">
+          <span class="visually-hidden">Open event</span>
+        </button>
+      </header>
       </header>
       <section class="event__details">
         <section class="event__section  event__section--offers">
@@ -142,9 +155,13 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
     this._flatpickr = [];
     this._submitHandler = null;
+    this._favoriteButtonClickHandler = null;
     this._setTypeChangeHandler = this._setTypeChangeHandler.bind(this);
     this._setTownChangeHandler = this._setTownChangeHandler.bind(this);
     this.setSubmitHandler = this.setSubmitHandler.bind(this);
+    this.setSubmitHandler = this.setSubmitHandler.bind(this);
+    this.setFavoriteButtonClickHandler = this.setFavoriteButtonClickHandler.bind(this);
+
     this._applyFlatpickr = this._applyFlatpickr.bind(this);
     this._subscribeOnEvents();
     this._applyFlatpickr();
@@ -194,9 +211,11 @@ export default class EventEditComponent extends AbstractSmartComponent {
     });
   }
 
-  rerender() {
-    super.rerender();
+  setFavoriteButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, handler);
+    this._favoriteButtonClickHandler = handler;
   }
+
   _applyFlatpickr() {
     // BUG in flatpickr!!!
     // if (this._flatpickr.length > 0) {

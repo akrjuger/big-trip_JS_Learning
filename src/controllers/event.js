@@ -8,24 +8,34 @@ const Mode = {
 };
 
 export default class EventController {
-  constructor(container, onViewChange) {
+  constructor(container, onDataChange, onViewChange) {
     this._container = container;
     this._eventComponent = null;
     this._eventEditComponent = null;
     this._mode = Mode.DEFAULT;
     this._onViewChange = onViewChange;
+    this._onDataChange = onDataChange;
     this._escHandler = this._escHandler.bind(this);
     // this._replaceEditComponent = this._replaceEditComponent.bind(this);
 
   }
 
   render(event) {
+    const oldEventComponent = this._eventComponent;
+    const oldEventEditComponent = this._eventEditComponent;
+
     this._eventComponent = new EventComponent(event);
     this._eventEditComponent = new EventEditComponent(event);
-    renderElement(this._container, this._eventComponent, `beforeend`);
+
+    if (oldEventComponent && oldEventEditComponent) {
+      replace(this._eventComponent, oldEventComponent);
+      replace(this._eventEditComponent, oldEventEditComponent);
+    } else {
+      renderElement(this._container, this._eventComponent, `beforeend`);
+    }
+
 
     //  logic for replacing one component on another
-
     this._eventComponent.setEditHandler(() => {
       this._onViewChange();
       this._mode = Mode.EDIT;
@@ -36,6 +46,11 @@ export default class EventController {
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
       this._replaceEditComponent();
+    });
+
+    this._eventEditComponent.setFavoriteButtonClickHandler(() => {
+      const newEvent = Object.assign({}, event, {isFavorite: !event.isFavorite});
+      this._onDataChange(this, event, newEvent);
     });
   }
 

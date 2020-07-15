@@ -124,7 +124,8 @@ export const generateEvent = () => {
     startDate,
     endDate: getDateEnd(startDate),
     price: getRandomNumber(1000, 20),
-    services: getServices()
+    services: getServices(),
+    isFavorite: getRandomNumber(2, 0) === 1
   };
 };
 
