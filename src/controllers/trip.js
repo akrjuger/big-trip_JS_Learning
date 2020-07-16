@@ -30,6 +30,7 @@ export default class TripController {
     this._eventsModel = eventsModel;
 
     this._eventsContollers = [];
+    this._eventIsCreating = false;
 
     this._sortingComponent = new SortingComponent();
     this._daysListComponent = new DaysListComponent();
@@ -39,7 +40,9 @@ export default class TripController {
     this._onViewChange = this._onViewChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
+    this._creatingButtonHandler = this._creatingButtonHandler.bind(this);
 
+    this._creatingButtonHandler();
     this._eventsModel.setFilterChangeHandler(this._onFilterChange);
   }
 
@@ -56,6 +59,22 @@ export default class TripController {
 
     this._sortingComponent.setSortTypeChangeHandler(this._onSortTypeChange);
     this._renderEventWithDates();
+
+    // add createEventButtonHandler
+  }
+
+  _creatingButtonHandler() {
+    const createButton = document.querySelector(`.trip-main__event-add-btn`);
+    createButton.addEventListener(`click`, () => {
+      if (this._eventIsCreating) {
+        return;
+      }
+      this._onViewChange();
+      const eventController = new EventController(this._daysListComponent.getElement(), this._onDataChange, this._onViewChange);
+      eventController.render();
+      this._eventsContollers.push(eventController);
+      this._eventIsCreating = true;
+    });
   }
 
   _renderEventWithDates() {
@@ -99,11 +118,30 @@ export default class TripController {
 
   _onViewChange() {
     this._eventsContollers.forEach((eventController) => eventController.setDefaultView());
+    this._eventIsCreating = false;
   }
 
   _onDataChange(eventController, oldEvent, newEvent) {
-    this._eventsModel.updateEvent(oldEvent.id, newEvent);
+    if (oldEvent === null && newEvent === null) {
+      eventController.destroy();
+      this._eventIsCreating = false;
+      return;
+    }
 
+    if (newEvent === null) {
+      this._eventsModel.deleteEvent(oldEvent.id);
+      this._updateEvents();
+      return;
+    }
+
+    if (oldEvent === null) {
+      this._eventsModel.addEvent(newEvent);
+      this._updateEvents();
+      this._eventIsCreating = false;
+      return;
+    }
+
+    this._eventsModel.updateEvent(oldEvent.id, newEvent);
     eventController.render(newEvent);
   }
 

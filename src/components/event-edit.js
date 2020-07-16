@@ -7,6 +7,11 @@ import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
+const Mode = {
+  EDIT: `edit`,
+  ADD: `add`
+};
+
 const createTypeMarkup = (type) => {
   return (
     `<div class="event__type-item">
@@ -25,13 +30,24 @@ const createTownOptionMarkup = (town) => {
 const createServiceMarkup = (service, isChecked) => {
   return (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${service.type}-1" type="checkbox" name="event-offer-${service.type}" ${isChecked ? `checked` : ``}>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${service.type}-1" type="checkbox" name="event-offer-${service.type}" ${isChecked ? `checked` : ``} value="${service.title}">
       <label class="event__offer-label" for="event-offer-${service.type}-1">
         <span class="event__offer-title">${service.title}</span>
         &plus;
         &euro;&nbsp;<span class="event__offer-price">${service.price}</span>
       </label>
     </div>`
+  );
+};
+
+const createCloseButtonMarkup = (mode) => {
+  if (mode === Mode.ADD) {
+    return ``;
+  }
+  return (
+    `        <button class="event__rollup-btn" type="button">
+              <span class="visually-hidden">Open event</span>
+            </button>`
   );
 };
 
@@ -56,11 +72,12 @@ const createDestinationMarkup = (event) => {
   );
 };
 
-const createEventEditTemplate = (event) => {
+const createEventEditTemplate = (event, mode) => {
   const placeTypesMarkup = EVENT_TYPES.place.map((type) => createTypeMarkup(type)).join(`\n`);
   const movingTypesMarkup = EVENT_TYPES.moving.map((type) => createTypeMarkup(type)).join(`\n`);
   const townsOptionMarkup = TOWNS.map((town) => createTownOptionMarkup(town)).join(`\n`);
   const servicesMarkup = SERVICES.map((service) => createServiceMarkup(service, event.services.includes(service))).join(`\n`);
+  const closeButtonMarkup = createCloseButtonMarkup(mode);
 
 
   const eventTitle = getEventTitle(event);
@@ -118,7 +135,7 @@ const createEventEditTemplate = (event) => {
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Cancel</button>
+        <button class="event__reset-btn" type="reset">${mode === Mode.EDIT ? `Delete` : `Cancel`}</button>
 
         <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${event.isFavorite ? `checked` : ``}>
         <label class="event__favorite-btn" for="event-favorite-1">
@@ -128,9 +145,7 @@ const createEventEditTemplate = (event) => {
           </svg>
         </label>
 
-        <button class="event__rollup-btn" type="button">
-          <span class="visually-hidden">Open event</span>
-        </button>
+        ${closeButtonMarkup}
       </header>
       </header>
       <section class="event__details">
@@ -149,18 +164,27 @@ const createEventEditTemplate = (event) => {
 };
 
 export default class EventEditComponent extends AbstractSmartComponent {
-  constructor(event) {
+  constructor(event, mode = Mode.EDIT) {
     super();
     this._event = event;
+    this._oldEvent = JSON.parse(JSON.stringify(event));
 
+    this._mode = mode;
     this._flatpickr = [];
+
     this._submitHandler = null;
     this._favoriteButtonClickHandler = null;
+    this._cancelButtonClickHandler = null;
+    this._closeButtonClickHandler = null;
+
     this._setTypeChangeHandler = this._setTypeChangeHandler.bind(this);
     this._setTownChangeHandler = this._setTownChangeHandler.bind(this);
+    this._setServicesChangeHandler = this._setServicesChangeHandler.bind(this);
     this.setSubmitHandler = this.setSubmitHandler.bind(this);
     this.setSubmitHandler = this.setSubmitHandler.bind(this);
     this.setFavoriteButtonClickHandler = this.setFavoriteButtonClickHandler.bind(this);
+    this.setCancelButtonClickHandler = this.setCancelButtonClickHandler.bind(this);
+    this.setCloseButtonClickHandler = this.setCloseButtonClickHandler.bind(this);
 
     this._applyFlatpickr = this._applyFlatpickr.bind(this);
     this._subscribeOnEvents();
@@ -168,7 +192,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._event);
+    return createEventEditTemplate(this._event, this._mode);
   }
 
   setSubmitHandler(handler) {
@@ -176,15 +200,26 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._submitHandler = handler;
   }
 
+  getData() {
+    this._event.price = this.getElement().querySelector(`.event__input--price`).value;
+    return this._event;
+  }
+
   recoveryListeners() {
     this._subscribeOnEvents();
+
     this.setSubmitHandler(this._submitHandler);
+    this.setFavoriteButtonClickHandler(this._favoriteButtonClickHandler);
+    this.setCancelButtonClickHandler(this._editButtonClickHandler);
+    this.setCloseButtonClickHandler(this._closeButtonClickHandler);
+
     this._applyFlatpickr();
   }
 
   _subscribeOnEvents() {
     this._setTypeChangeHandler();
     this._setTownChangeHandler();
+    this._setServicesChangeHandler();
   }
 
   _setTypeChangeHandler() {
@@ -198,7 +233,6 @@ export default class EventEditComponent extends AbstractSmartComponent {
       }
 
       this._event.type = selectedType;
-
       this.rerender();
     });
   }
@@ -211,9 +245,48 @@ export default class EventEditComponent extends AbstractSmartComponent {
     });
   }
 
+  _setServicesChangeHandler() {
+    this.getElement().querySelector(`.event__available-offers`).addEventListener(`change`, (evt) => {
+
+      const selectedService = evt.target.value;
+
+      let serviceWasSelectedBefore = false;
+      this._event.services.forEach((service) => {
+        if (service.title === selectedService) {
+          this._event.services = this._event.services.filter((it) => (it.title !== selectedService));
+          serviceWasSelectedBefore = true;
+        }
+      });
+      if (serviceWasSelectedBefore) {
+        return;
+      }
+      this._event.services.push(SERVICES.find((sevice) => sevice.title === selectedService));
+    });
+  }
+
   setFavoriteButtonClickHandler(handler) {
     this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, handler);
     this._favoriteButtonClickHandler = handler;
+  }
+
+  setCancelButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      handler();
+    });
+    this._cancelButtonClickHandler = handler;
+  }
+
+  setCloseButtonClickHandler(handler) {
+    if (this._mode === Mode.EDIT) {
+      this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, handler);
+      this._closeButtonClickHandler = handler;
+    }
+  }
+
+  reset() {
+    this._event = JSON.parse(JSON.stringify(this._oldEvent));
+    this.rerender();
   }
 
   _applyFlatpickr() {

@@ -1,10 +1,25 @@
 import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
 import {renderElement, replace, remove} from '../utils/render.js';
+import {EVENT_TYPES} from '../const.js';
+import {getServices} from '../mockup/event.js';
 
 const Mode = {
   DEFAULT: `default`,
-  EDIT: `edit`
+  EDIT: `edit`,
+  ADD: `add`
+};
+
+const DEFAULT_EVENT = {
+  type: EVENT_TYPES.place[0],
+  town: `Barcelona`,
+  photos: [],
+  description: [],
+  startDate: new Date(),
+  endDate: new Date(),
+  price: 0,
+  services: getServices(),
+  isFavorite: false
 };
 
 export default class EventController {
@@ -12,9 +27,12 @@ export default class EventController {
     this._container = container;
     this._eventComponent = null;
     this._eventEditComponent = null;
+
     this._mode = Mode.DEFAULT;
+
     this._onViewChange = onViewChange;
     this._onDataChange = onDataChange;
+
     this._escHandler = this._escHandler.bind(this);
     // this._replaceEditComponent = this._replaceEditComponent.bind(this);
 
@@ -24,12 +42,19 @@ export default class EventController {
     const oldEventComponent = this._eventComponent;
     const oldEventEditComponent = this._eventEditComponent;
 
-    this._eventComponent = new EventComponent(event);
-    this._eventEditComponent = new EventEditComponent(event);
-
+    if (!event) {
+      this._mode = Mode.ADD;
+      this._eventComponent = new EventComponent(DEFAULT_EVENT);
+      this._eventEditComponent = new EventEditComponent(DEFAULT_EVENT, Mode.ADD);
+    } else {
+      this._eventComponent = new EventComponent(event);
+      this._eventEditComponent = new EventEditComponent(event, Mode.EDIT);
+    }
     if (oldEventComponent && oldEventEditComponent) {
       replace(this._eventComponent, oldEventComponent);
       replace(this._eventEditComponent, oldEventEditComponent);
+    } else if (!event) {
+      renderElement(this._container, this._eventEditComponent, `afterbegin`);
     } else {
       renderElement(this._container, this._eventComponent, `beforeend`);
     }
@@ -45,12 +70,30 @@ export default class EventController {
 
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
+      if (this._mode === Mode.ADD) {
+        this._onDataChange(this, null, this._eventEditComponent.getData());
+        return;
+      }
+      this._onDataChange(this, event, this._eventEditComponent.getData());
       this._replaceEditComponent();
     });
 
     this._eventEditComponent.setFavoriteButtonClickHandler(() => {
       const newEvent = Object.assign({}, event, {isFavorite: !event.isFavorite});
       this._onDataChange(this, event, newEvent);
+    });
+
+    this._eventEditComponent.setCancelButtonClickHandler(() => {
+      if (this._mode === Mode.EDIT) {
+        this._onDataChange(this, event, null);
+      } else {
+        this._onDataChange(this, null, null);
+      }
+    });
+
+    this._eventEditComponent.setCloseButtonClickHandler(() => {
+      this._eventEditComponent.reset();
+      this._replaceEditComponent();
     });
   }
 
@@ -69,6 +112,10 @@ export default class EventController {
   setDefaultView() {
     if (this._mode === Mode.EDIT) {
       this._replaceEditComponent();
+      return;
+    }
+    if (this._mode === Mode.ADD) {
+      this.destroy();
     }
   }
 

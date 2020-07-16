@@ -89,7 +89,7 @@ const getDateEnd = (startDate) => {
   return new Date(startDate.getTime() + duration);
 };
 
-const getServices = () => {
+export const getServices = () => {
   const quantity = getRandomNumber(MAX_SERVICES_QUANTITY + 1, MIN_SERVICES_QUANTITY);
   const result = [];
   for (let i = 0; i < quantity; i++) {
