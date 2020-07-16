@@ -1,4 +1,4 @@
-import TripInfoComponent from './components/trip-info.js';
+import TripInfoController from './controllers/trip-info.js';
 import MenuComponent from './components/menu.js';
 import FiltersController from './controllers/filters.js';
 import TripController from './controllers/trip.js';
@@ -19,7 +19,10 @@ const tripInfoHeader = document.querySelector(`.trip-main`);
 const controlsElement = tripInfoHeader.querySelector(`.trip-main__trip-controls`);
 const boardElement = document.querySelector(`.trip-events`);
 
-renderElement(tripInfoHeader, new TripInfoComponent(eventsModel), `afterbegin`);
+// renderElement(tripInfoHeader, new TripInfoComponent(eventsModel), `afterbegin`);
+const tripInfoController = new TripInfoController(tripInfoHeader, eventsModel);
+tripInfoController.render();
+
 renderElement(controlsElement, new MenuComponent(), `afterbegin`);
 
 const filtersController = new FiltersController(controlsElement, eventsModel);

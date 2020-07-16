@@ -6,7 +6,9 @@ export default class EventsModel {
   constructor() {
     this._events = null;
     this._currentFilter = FilterType.EVERYTHING;
+
     this._filterChangeHandler = null;
+    this._dataChangeHandler = () => ``;
 
     this.deleteEvent = this.deleteEvent.bind(this);
     this.updateEvent = this.updateEvent.bind(this);
@@ -29,25 +31,33 @@ export default class EventsModel {
   setEvents(events) {
     this._events = events;
     this._events = sortEventsByDate(this._events);
+    this._dataChangeHandler();
   }
 
   updateEvent(id, newEvent) {
     this._events[this._findIndexById(id)] = newEvent;
+    this._dataChangeHandler();
   }
 
   deleteEvent(id) {
     this._events = this._events.filter((event) => !(id === event.id));
+    this._dataChangeHandler();
   }
 
   addEvent(event) {
     event = Object.assign({}, event, {id: this._events.length});
     this._events.push(event);
     this._events = sortEventsByDate(this._events);
+    this._dataChangeHandler();
   }
 
   setFilter(filterType) {
     this._currentFilter = filterType;
     this._filterChangeHandler();
+  }
+
+  setDataChangeHandler(handler) {
+    this._dataChangeHandler = handler;
   }
 
   _findIndexById(id) {

@@ -27,7 +27,7 @@ const getTripDatesMarkup = (events) => {
 const getTotalPrice = (events) => {
   let totalcost = 0;
   events.map((it) => {
-    totalcost += it.price;
+    totalcost += +it.price;
     it.services.map((service) => {
       totalcost += service.price;
     });
@@ -36,8 +36,7 @@ const getTotalPrice = (events) => {
 };
 
 
-const createTripInfoTemplate = (eventsModel) => {
-  const events = eventsModel.getEvents();
+const createTripInfoTemplate = (events) => {
   const isEvents = events.length !== 0;
   return (
     `<section class="trip-main__trip-info  trip-info">
@@ -58,6 +57,10 @@ export default class TripInfoComponent extends AbstractSmartComponent {
   constructor(events) {
     super();
     this._events = events;
+  }
+
+  recoveryListeners() {
+
   }
 
   getTemplate() {
