@@ -4,6 +4,7 @@ import DaysListComponent from '../components/days-list.js';
 import DayComponent from '../components/day.js';
 import EventController from './event.js';
 import {renderElement, remove} from '../utils/render.js';
+import {HIDDEN_CLASS} from '../const.js';
 
 const getSortedEvents = (events, sortType) => {
   let sortedEvents = events.slice();
@@ -156,5 +157,13 @@ export default class TripController {
 
   _onFilterChange() {
     this._updateEvents();
+  }
+
+  hide() {
+    this._container.classList.add(HIDDEN_CLASS);
+  }
+
+  show() {
+    this._container.classList.remove(HIDDEN_CLASS);
   }
 }
