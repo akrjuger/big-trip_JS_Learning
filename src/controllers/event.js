@@ -83,7 +83,7 @@ export default class EventController {
       this._onDataChange(this, event, newEvent);
     });
 
-    this._eventEditComponent.setCancelButtonClickHandler(() => {
+    this._eventEditComponent.setDeleteButtonClickHandler(() => {
       if (this._mode === Mode.EDIT) {
         this._onDataChange(this, event, null);
       } else {

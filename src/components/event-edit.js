@@ -174,7 +174,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
     this._submitHandler = null;
     this._favoriteButtonClickHandler = null;
-    this._cancelButtonClickHandler = null;
+    this._deleteButtonClickHandler = null;
     this._closeButtonClickHandler = null;
 
     this._setTypeChangeHandler = this._setTypeChangeHandler.bind(this);
@@ -183,7 +183,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this.setSubmitHandler = this.setSubmitHandler.bind(this);
     this.setSubmitHandler = this.setSubmitHandler.bind(this);
     this.setFavoriteButtonClickHandler = this.setFavoriteButtonClickHandler.bind(this);
-    this.setCancelButtonClickHandler = this.setCancelButtonClickHandler.bind(this);
+    this.setDeleteButtonClickHandler = this.setDeleteButtonClickHandler.bind(this);
     this.setCloseButtonClickHandler = this.setCloseButtonClickHandler.bind(this);
 
     this._applyFlatpickr = this._applyFlatpickr.bind(this);
@@ -210,7 +210,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
     this.setSubmitHandler(this._submitHandler);
     this.setFavoriteButtonClickHandler(this._favoriteButtonClickHandler);
-    this.setCancelButtonClickHandler(this._editButtonClickHandler);
+    this.setDeleteButtonClickHandler(this._deleteButtonClickHandler);
     this.setCloseButtonClickHandler(this._closeButtonClickHandler);
 
     this._applyFlatpickr();
@@ -269,12 +269,12 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._favoriteButtonClickHandler = handler;
   }
 
-  setCancelButtonClickHandler(handler) {
+  setDeleteButtonClickHandler(handler) {
     this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, (evt) => {
       evt.preventDefault();
       handler();
     });
-    this._cancelButtonClickHandler = handler;
+    this._deleteButtonClickHandler = handler;
   }
 
   setCloseButtonClickHandler(handler) {
