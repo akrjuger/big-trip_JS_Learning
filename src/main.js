@@ -33,10 +33,12 @@ filtersController.render();
 
 const tripController = new TripController(boardElement, eventsModel);
 tripController.render();
+tripController.hide();
 
 const statsComponent = new StatsComponent();
 renderElement(statsContainer, statsComponent, `beforeend`);
-statsComponent.hide();
+// statsComponent.hide();
+statsComponent.renderMoneyChart(eventsModel.getEventsAll());
 
 menuComponent.setChangeMenuClickHandler((activeMenu) => {
   if (activeMenu === `Table`) {
