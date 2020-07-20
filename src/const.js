@@ -27,6 +27,19 @@ export const EVENT_ICONS = {
   'Flight': `flight.png`
 };
 
+export const EVENT_EMOJI = {
+  'Check-in': `🏨`,
+  'Sightseeing': `🏛`,
+  'Restaurant': `🍴`,
+  'Taxi': `🚕`,
+  'Bus': `🚌`,
+  'Train': `🚂`,
+  'Ship': `🚢`,
+  'Transport': `🚆`,
+  'Drive': `🚗`,
+  'Flight': `✈️`
+};
+
 export const FilterType = {
   EVERYTHING: `everything`,
   FUTURE: `future`,

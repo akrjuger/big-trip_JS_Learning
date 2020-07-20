@@ -38,7 +38,7 @@ tripController.hide();
 const statsComponent = new StatsComponent();
 renderElement(statsContainer, statsComponent, `beforeend`);
 // statsComponent.hide();
-statsComponent.renderMoneyChart(eventsModel.getEventsAll());
+statsComponent.renderAllCharts(eventsModel.getEventsAll());
 
 menuComponent.setChangeMenuClickHandler((activeMenu) => {
   if (activeMenu === `Table`) {
