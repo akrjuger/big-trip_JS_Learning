@@ -2,9 +2,10 @@ import TripInfoComponent from '../components/trip-info.js';
 import {renderElement, replace} from '../utils/render.js';
 
 export default class TripInfoController {
-  constructor(container, eventsModel) {
+  constructor(container, eventsModel, statsComponent) {
     this._container = container;
     this._eventsModel = eventsModel;
+    this._statsCompomemt = statsComponent;
 
     this._tripInfoComponent = null;
 
@@ -24,5 +25,6 @@ export default class TripInfoController {
 
   _onDataChange() {
     this.render();
+    this._statsCompomemt.rerender(this._eventsModel.getEventsAll());
   }
 }

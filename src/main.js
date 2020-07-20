@@ -22,8 +22,7 @@ const boardElement = document.querySelector(`.trip-events`);
 const statsContainer = document.querySelector(`.page-body__page-main > .page-body__container`);
 
 // renderElement(tripInfoHeader, new TripInfoComponent(eventsModel), `afterbegin`);
-const tripInfoController = new TripInfoController(tripInfoHeader, eventsModel);
-tripInfoController.render();
+
 
 const menuComponent = new MenuComponent();
 renderElement(controlsElement, menuComponent, `afterbegin`);
@@ -33,12 +32,15 @@ filtersController.render();
 
 const tripController = new TripController(boardElement, eventsModel);
 tripController.render();
-tripController.hide();
+// tripController.hide();
 
 const statsComponent = new StatsComponent();
 renderElement(statsContainer, statsComponent, `beforeend`);
-// statsComponent.hide();
+statsComponent.hide();
 statsComponent.renderAllCharts(eventsModel.getEventsAll());
+
+const tripInfoController = new TripInfoController(tripInfoHeader, eventsModel, statsComponent);
+tripInfoController.render();
 
 menuComponent.setChangeMenuClickHandler((activeMenu) => {
   if (activeMenu === `Table`) {

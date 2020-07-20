@@ -38,6 +38,15 @@ export default class StatsComponent extends AbstractSmartComponent {
     this.renderTimeSpentChart(events);
   }
 
+  recoveryListeners() {
+
+  }
+
+  rerender(events) {
+    super.rerender();
+    this.renderAllCharts(events);
+  }
+
   prepareData(events) {
     let dataTypes = [];
     EVENT_TYPES.moving.forEach((type) => {
