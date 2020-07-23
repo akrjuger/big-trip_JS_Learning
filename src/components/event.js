@@ -36,7 +36,7 @@ const createEventTemplate = (event) => {
   const endTime = `${getStringForTime(event.endDate.getHours())}:${getStringForTime(event.endDate.getMinutes())}`;
 
   const durationMarkup = getDurationMarkup(event);
-  const offersMarkup = event.services.map((offer) => getOfferMarkup(offer)).join(`\n`);
+  const offersMarkup = event.offers.map((offer) => getOfferMarkup(offer)).join(`\n`);
 
   return (
     `<li class="trip-events__item">

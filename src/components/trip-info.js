@@ -5,7 +5,7 @@ const MAX_TOWNS_NAMES = 3;
 
 const getTripTownsMarkup = (events) => {
   const towns = events
-    .map((event) => event.town)
+    .map((event) => event.destination.name)
     .filter((event, i, array) => event !== array[i - 1]); // delete towns if they are neighrbars
 
   let tripMarkup = ``;
@@ -28,8 +28,8 @@ const getTotalPrice = (events) => {
   let totalcost = 0;
   events.map((it) => {
     totalcost += +it.price;
-    it.services.map((service) => {
-      totalcost += service.price;
+    it.offers.map((offer) => {
+      totalcost += offer.price;
     });
   });
   return totalcost;

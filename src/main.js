@@ -6,8 +6,8 @@ import TripController from './controllers/trip.js';
 import EventsModel from './models/events.js';
 import API from './api.js';
 import {renderElement} from './utils/render.js';
-import {sortEventsByDate} from './utils/events.js';
-import {generateEvents} from './mockup/event.js';
+// import {sortEventsByDate} from './utils/events.js';
+// import {generateEvents} from './mockup/event.js';
 
 const END_POINT = `https://12.ecmascript.pages.academy/big-trip/`;
 // const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip/`;
@@ -67,8 +67,7 @@ menuComponent.setChangeMenuClickHandler((activeMenu) => {
 Promise.all([api.getDestinations(), api.getOffers(), api.getEvents()])
   .then((values) => {
     eventsModel.setDestinatioins(values[0]);
-    console.log(eventsModel.getDestinations());
-    console.log(`Offers :` + values[1]);
+    eventsModel.setOffers(values[1]);
     eventsModel.setEvents(values[2]);
     filtersController.render();
     tripController.render();

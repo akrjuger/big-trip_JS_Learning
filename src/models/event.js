@@ -9,12 +9,8 @@ export default class EventModel {
       // town: data.destination.name,
       // photos: data.destination.pictures.map((picture) => picture.src),
       // description: data.destination.description,
-      destination: {
-        name: data.destination.name,
-        pictures: data.destination.pictures,
-        description: data.destination.description
-      },
-      services: [],
+      destination: data.destination,
+      offers: data.offers,
       isFavorite: data.is_favorite
     };
 

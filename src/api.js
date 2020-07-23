@@ -55,6 +55,7 @@ export default class API {
       return response.json();
     })
     .then((datas) => {
+      return datas;
       // console.log(datas);
       // console.log(this._eventModels.forEach((eventModel) => eventModel.getEvent()));
     });

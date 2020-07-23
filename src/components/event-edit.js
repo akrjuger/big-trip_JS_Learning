@@ -1,6 +1,6 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {EVENT_TYPES, EVENT_ICONS} from '../const.js';
-import {SERVICES} from '../mockup/event.js';
+// import {SERVICES} from '../mockup/event.js';
 import {getEventTitle} from '../utils/events.js';
 import {getDateAndTimeFormatString, getDateFromString} from '../utils/common.js';
 import flatpickr from 'flatpickr';
@@ -27,14 +27,15 @@ const createDestinationOptionMarkup = (town) => {
   );
 };
 
-const createServiceMarkup = (service, isChecked) => {
+const createOfferMarkup = (offer, isChecked) => {
+  const offerId = offer.title.toLowerCase().replace(` `, ``);
   return (
     `<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${service.type}-1" type="checkbox" name="event-offer-${service.type}" ${isChecked ? `checked` : ``} value="${service.title}">
-      <label class="event__offer-label" for="event-offer-${service.type}-1">
-        <span class="event__offer-title">${service.title}</span>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerId}-1" type="checkbox" name="event-offer-${offerId}" ${isChecked ? `checked` : ``} value="${offer.title}">
+      <label class="event__offer-label" for="event-offer-${offerId}-1">
+        <span class="event__offer-title">${offer.title}</span>
         &plus;
-        &euro;&nbsp;<span class="event__offer-price">${service.price}</span>
+        &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
       </label>
     </div>`
   );
@@ -72,11 +73,15 @@ const createDestinationMarkup = (event) => {
   );
 };
 
-const createEventEditTemplate = (event, mode, destinations) => {
+const createEventEditTemplate = (event, mode, destinations, offers) => {
   const placeTypesMarkup = EVENT_TYPES.place.map((type) => createTypeMarkup(type)).join(`\n`);
   const movingTypesMarkup = EVENT_TYPES.moving.map((type) => createTypeMarkup(type)).join(`\n`);
   const destinationsOptionMarkup = destinations.map((destination) => createDestinationOptionMarkup(destination.name)).join(`\n`);
-  const servicesMarkup = SERVICES.map((service) => createServiceMarkup(service, event.services.includes(service))).join(`\n`);
+  const offersForThisType = offers.find((offersForType) => offersForType.type === event.type.toLowerCase());
+  const offersMarkup = offersForThisType.offers.map((offer) => {
+    const eventOffersTitiles = event.offers.map((eventOffer) => eventOffer.title);
+    return createOfferMarkup(offer, eventOffersTitiles.includes(offer.title));
+  }).join(`\n`);
   const closeButtonMarkup = createCloseButtonMarkup(mode);
 
 
@@ -153,7 +158,7 @@ const createEventEditTemplate = (event, mode, destinations) => {
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
-            ${servicesMarkup}
+            ${offersMarkup}
         </section>
 
         ${createDestinationMarkup(event)}
@@ -164,11 +169,12 @@ const createEventEditTemplate = (event, mode, destinations) => {
 };
 
 export default class EventEditComponent extends AbstractSmartComponent {
-  constructor(event, mode = Mode.EDIT, destinations) {
+  constructor(event, mode = Mode.EDIT, destinations, offers) {
     super();
     this._event = event;
     this._oldEvent = JSON.parse(JSON.stringify(event));
     this._destinations = destinations;
+    this._offers = offers;
 
     this._mode = mode;
     this._flatpickr = [];
@@ -180,7 +186,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
     this._setTypeChangeHandler = this._setTypeChangeHandler.bind(this);
     this._setDestinationChangeHandler = this._setDestinationChangeHandler.bind(this);
-    this._setServicesChangeHandler = this._setServicesChangeHandler.bind(this);
+    this._setOffersChangeHandler = this._setOffersChangeHandler.bind(this);
     this.setSubmitHandler = this.setSubmitHandler.bind(this);
     this.setSubmitHandler = this.setSubmitHandler.bind(this);
     this.setFavoriteButtonClickHandler = this.setFavoriteButtonClickHandler.bind(this);
@@ -193,7 +199,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._event, this._mode, this._destinations);
+    return createEventEditTemplate(this._event, this._mode, this._destinations, this._offers);
   }
 
   setSubmitHandler(handler) {
@@ -220,7 +226,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
   _subscribeOnEvents() {
     this._setTypeChangeHandler();
     this._setDestinationChangeHandler();
-    this._setServicesChangeHandler();
+    this._setOffersChangeHandler();
   }
 
   _setTypeChangeHandler() {
@@ -250,22 +256,22 @@ export default class EventEditComponent extends AbstractSmartComponent {
     });
   }
 
-  _setServicesChangeHandler() {
+  _setOffersChangeHandler() {
     this.getElement().querySelector(`.event__available-offers`).addEventListener(`change`, (evt) => {
 
-      const selectedService = evt.target.value;
+      const selectedOffer = evt.target.value;
 
-      let serviceWasSelectedBefore = false;
-      this._event.services.forEach((service) => {
-        if (service.title === selectedService) {
-          this._event.services = this._event.services.filter((it) => (it.title !== selectedService));
-          serviceWasSelectedBefore = true;
+      let offerWasSelectedBefore = false;
+      this._event.offers.forEach((offer) => {
+        if (offer.title === selectedOffer) {
+          this._event.offers = this._event.offers.filter((it) => (it.title !== selectedOffer));
+          offerWasSelectedBefore = true;
         }
       });
-      if (serviceWasSelectedBefore) {
+      if (offerWasSelectedBefore) {
         return;
       }
-      this._event.services.push(SERVICES.find((sevice) => sevice.title === selectedService));
+      // this._event.offers.push(SERVICES.find((sevice) => sevice.title === selectedService));
     });
   }
 

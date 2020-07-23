@@ -46,10 +46,10 @@ export default class EventController {
     if (!event) {
       this._mode = Mode.ADD;
       this._eventComponent = new EventComponent(DEFAULT_EVENT);
-      this._eventEditComponent = new EventEditComponent(DEFAULT_EVENT, Mode.ADD, this._eventsModel.getDestinations());
+      this._eventEditComponent = new EventEditComponent(DEFAULT_EVENT, Mode.ADD, this._eventsModel.getDestinations(), this._eventsModel.getOffers());
     } else {
       this._eventComponent = new EventComponent(event);
-      this._eventEditComponent = new EventEditComponent(event, Mode.EDIT, this._eventsModel.getDestinations());
+      this._eventEditComponent = new EventEditComponent(event, Mode.EDIT, this._eventsModel.getDestinations(), this._eventsModel.getOffers());
     }
     if (oldEventComponent && oldEventEditComponent) {
       replace(this._eventComponent, oldEventComponent);
