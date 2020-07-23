@@ -271,7 +271,8 @@ export default class EventEditComponent extends AbstractSmartComponent {
       if (offerWasSelectedBefore) {
         return;
       }
-      // this._event.offers.push(SERVICES.find((sevice) => sevice.title === selectedService));
+      const offersForThisType = this._offers.find((offersForType) => offersForType.type === this._event.type.toLowerCase());
+      this._event.offers.push(offersForThisType.offers.find((offer) => offer.title === selectedOffer));
     });
   }
 
@@ -297,6 +298,8 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
   reset() {
     this._event = JSON.parse(JSON.stringify(this._oldEvent));
+    this._event.startDate = new Date(this._event.startDate);
+    this._event.endDate = new Date(this._event.endDate);
     this.rerender();
   }
 
