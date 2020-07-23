@@ -44,6 +44,7 @@ export default class StatsComponent extends AbstractSmartComponent {
 
   rerender(events) {
     super.rerender();
+    this.hide();
     this.renderAllCharts(events);
   }
 
@@ -55,7 +56,7 @@ export default class StatsComponent extends AbstractSmartComponent {
       let durationTime = 0;
       for (const event of events) {
         if (event.type === type) {
-          price += event.price;
+          price += +event.price;
           count++;
           durationTime += new Date(event.endDate - event.startDate).getTime();
         }
@@ -67,7 +68,7 @@ export default class StatsComponent extends AbstractSmartComponent {
       let durationTime = 0;
       for (const event of events) {
         if (event.type === type) {
-          price += event.price;
+          price += +event.price;
           durationTime += new Date(event.endDate - event.startDate).getTime();
         }
       }
