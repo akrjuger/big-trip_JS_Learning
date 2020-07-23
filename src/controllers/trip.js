@@ -71,7 +71,7 @@ export default class TripController {
         return;
       }
       this._onViewChange();
-      const eventController = new EventController(this._daysListComponent.getElement(), this._onDataChange, this._onViewChange);
+      const eventController = new EventController(this._daysListComponent.getElement(), this._onDataChange, this._onViewChange, this._eventsModel);
       eventController.render();
       this._eventsContollers.push(eventController);
       this._eventIsCreating = true;
@@ -90,7 +90,7 @@ export default class TripController {
       // ****************
       for (const event of events) {
         if (event.startDate.toDateString() === dateString) {
-          const eventController = new EventController(eventsDayElement, this._onDataChange, this._onViewChange);
+          const eventController = new EventController(eventsDayElement, this._onDataChange, this._onViewChange, this._eventsModel);
           eventController.render(event);
           this._eventsContollers.push(eventController);
         }
@@ -111,7 +111,7 @@ export default class TripController {
     renderElement(this._daysListComponent.getElement(), dayElement, `beforeend`);
     const eventsDayElement = dayElement.getElement().querySelector(`.trip-events__list`);
     for (const event of sortedEvents) {
-      const eventController = new EventController(eventsDayElement, this._onDataChange, this._onViewChange);
+      const eventController = new EventController(eventsDayElement, this._onDataChange, this._onViewChange, this._eventsModel);
       eventController.render(event);
       this._eventsContollers.push(eventController);
     }

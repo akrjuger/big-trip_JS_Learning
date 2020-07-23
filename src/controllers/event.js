@@ -23,7 +23,7 @@ const DEFAULT_EVENT = {
 };
 
 export default class EventController {
-  constructor(container, onDataChange, onViewChange) {
+  constructor(container, onDataChange, onViewChange, eventsModel) {
     this._container = container;
     this._eventComponent = null;
     this._eventEditComponent = null;
@@ -36,6 +36,7 @@ export default class EventController {
     this._escHandler = this._escHandler.bind(this);
     // this._replaceEditComponent = this._replaceEditComponent.bind(this);
 
+    this._eventsModel = eventsModel;
   }
 
   render(event) {
@@ -45,10 +46,10 @@ export default class EventController {
     if (!event) {
       this._mode = Mode.ADD;
       this._eventComponent = new EventComponent(DEFAULT_EVENT);
-      this._eventEditComponent = new EventEditComponent(DEFAULT_EVENT, Mode.ADD);
+      this._eventEditComponent = new EventEditComponent(DEFAULT_EVENT, Mode.ADD, this._eventsModel.getDestinations());
     } else {
       this._eventComponent = new EventComponent(event);
-      this._eventEditComponent = new EventEditComponent(event, Mode.EDIT);
+      this._eventEditComponent = new EventEditComponent(event, Mode.EDIT, this._eventsModel.getDestinations());
     }
     if (oldEventComponent && oldEventEditComponent) {
       replace(this._eventComponent, oldEventComponent);

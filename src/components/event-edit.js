@@ -1,6 +1,6 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {EVENT_TYPES, EVENT_ICONS} from '../const.js';
-import {TOWNS, SERVICES} from '../mockup/event.js';
+import {SERVICES} from '../mockup/event.js';
 import {getEventTitle} from '../utils/events.js';
 import {getDateAndTimeFormatString, getDateFromString} from '../utils/common.js';
 import flatpickr from 'flatpickr';
@@ -21,7 +21,7 @@ const createTypeMarkup = (type) => {
   );
 };
 
-const createTownOptionMarkup = (town) => {
+const createDestinationOptionMarkup = (town) => {
   return (
     `<option value="${town}"></option>`
   );
@@ -52,16 +52,16 @@ const createCloseButtonMarkup = (mode) => {
 };
 
 const createDestinationMarkup = (event) => {
-  const eventPhotos = event.photos.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`);
+  const eventPhotos = event.destination.pictures.map((photo) => `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`);
 
-  if (EVENT_TYPES.moving.includes(event.type)) {
-    return ``;
-  }
+  // if (EVENT_TYPES.moving.includes(event.type)) {
+  //   return ``;
+  // }
 
   return (
     `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${event.description}</p>
+      <p class="event__destination-description">${event.destination.description}</p>
 
       <div class="event__photos-container">
         <div class="event__photos-tape">
@@ -72,10 +72,10 @@ const createDestinationMarkup = (event) => {
   );
 };
 
-const createEventEditTemplate = (event, mode) => {
+const createEventEditTemplate = (event, mode, destinations) => {
   const placeTypesMarkup = EVENT_TYPES.place.map((type) => createTypeMarkup(type)).join(`\n`);
   const movingTypesMarkup = EVENT_TYPES.moving.map((type) => createTypeMarkup(type)).join(`\n`);
-  const townsOptionMarkup = TOWNS.map((town) => createTownOptionMarkup(town)).join(`\n`);
+  const destinationsOptionMarkup = destinations.map((destination) => createDestinationOptionMarkup(destination.name)).join(`\n`);
   const servicesMarkup = SERVICES.map((service) => createServiceMarkup(service, event.services.includes(service))).join(`\n`);
   const closeButtonMarkup = createCloseButtonMarkup(mode);
 
@@ -108,9 +108,9 @@ const createEventEditTemplate = (event, mode) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${eventTitle}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${event.town}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${event.destination.name}" list="destination-list-1">
           <datalist id="destination-list-1">
-            ${townsOptionMarkup}
+            ${destinationsOptionMarkup}
           </datalist>
         </div>
 
@@ -164,10 +164,11 @@ const createEventEditTemplate = (event, mode) => {
 };
 
 export default class EventEditComponent extends AbstractSmartComponent {
-  constructor(event, mode = Mode.EDIT) {
+  constructor(event, mode = Mode.EDIT, destinations) {
     super();
     this._event = event;
     this._oldEvent = JSON.parse(JSON.stringify(event));
+    this._destinations = destinations;
 
     this._mode = mode;
     this._flatpickr = [];
@@ -178,7 +179,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._closeButtonClickHandler = null;
 
     this._setTypeChangeHandler = this._setTypeChangeHandler.bind(this);
-    this._setTownChangeHandler = this._setTownChangeHandler.bind(this);
+    this._setDestinationChangeHandler = this._setDestinationChangeHandler.bind(this);
     this._setServicesChangeHandler = this._setServicesChangeHandler.bind(this);
     this.setSubmitHandler = this.setSubmitHandler.bind(this);
     this.setSubmitHandler = this.setSubmitHandler.bind(this);
@@ -192,7 +193,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEventEditTemplate(this._event, this._mode);
+    return createEventEditTemplate(this._event, this._mode, this._destinations);
   }
 
   setSubmitHandler(handler) {
@@ -218,7 +219,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     this._setTypeChangeHandler();
-    this._setTownChangeHandler();
+    this._setDestinationChangeHandler();
     this._setServicesChangeHandler();
   }
 
@@ -237,10 +238,14 @@ export default class EventEditComponent extends AbstractSmartComponent {
     });
   }
 
-  _setTownChangeHandler() {
-    const townInput = this.getElement().querySelector(`.event__input--destination`);
-    townInput.addEventListener(`change`, () => {
-      this._event.town = townInput.value;
+  _setDestinationChangeHandler() {
+    const destinationInput = this.getElement().querySelector(`.event__input--destination`);
+    destinationInput.addEventListener(`change`, () => {
+      const destinationIndex = this._destinations.findIndex((destination) => destination.name === destinationInput.value);
+      if (destinationIndex === -1) {
+        return;
+      }
+      this._event.destination = this._destinations[destinationIndex];
       this.rerender();
     });
   }

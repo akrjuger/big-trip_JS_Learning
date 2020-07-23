@@ -31,7 +31,7 @@ const getDurationMarkup = (event) => {
 
 const createEventTemplate = (event) => {
   const eventIcon = `img/icons/${EVENT_ICONS[event.type]}`.toLowerCase();
-  const eventTitle = getEventTitle(event) + ` ${event.town}`;
+  const eventTitle = getEventTitle(event) + ` ${event.destination.name}`;
   const startTime = `${getStringForTime(event.startDate.getHours())}:${getStringForTime(event.startDate.getMinutes())}`;
   const endTime = `${getStringForTime(event.endDate.getHours())}:${getStringForTime(event.endDate.getMinutes())}`;
 

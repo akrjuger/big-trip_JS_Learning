@@ -5,6 +5,8 @@ import {sortEventsByDate} from '../utils/events.js';
 export default class EventsModel {
   constructor() {
     this._events = null;
+    this._destinations = null;
+    this._offers = null;
     this._currentFilter = FilterType.EVERYTHING;
 
     this._filterChangeHandler = null;
@@ -58,6 +60,22 @@ export default class EventsModel {
 
   setDataChangeHandler(handler) {
     this._dataChangeHandler = handler;
+  }
+
+  setDestinatioins(destinations) {
+    this._destinations = destinations;
+  }
+
+  getDestinations() {
+    return this._destinations;
+  }
+
+  setOffers(offers) {
+    this._offers = offers;
+  }
+
+  getOffers() {
+    return this._offers;
   }
 
   _findIndexById(id) {
