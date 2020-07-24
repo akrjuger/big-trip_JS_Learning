@@ -22,6 +22,10 @@ export default class API {
     return this._load(`points`, Methods.POST, JSON.stringify(EventModel.toRAW(event)));
   }
 
+  deleteEvent(id) {
+    return this._load(`points/` + id, Methods.DELETE);
+  }
+
   getDestinations() {
     return this._load(`destinations`);
   }
@@ -42,7 +46,10 @@ export default class API {
       if (response.status !== 200) {
         throw new Error(response.url + ` : ` + response.status + response.statusText);
       }
-      return response.json();
+      if (method !== Methods.DELETE) {
+        return response.json();
+      }
+      return response.status;
     });
   }
 

@@ -3,6 +3,7 @@ import SortingComponent, {SortType} from '../components/sort.js';
 import DaysListComponent from '../components/days-list.js';
 import DayComponent from '../components/day.js';
 import EventController from './event.js';
+import EventModel from '../models/event.js';
 import {renderElement, remove} from '../utils/render.js';
 import {HIDDEN_CLASS} from '../const.js';
 
@@ -132,16 +133,21 @@ export default class TripController {
     }
     // delete event
     if (newEvent === null) {
-      this._eventsModel.deleteEvent(oldEvent.id);
-      this._updateEvents();
+      this._api.deleteEvent(oldEvent.id)
+        .then(() => {
+          this._eventsModel.deleteEvent(oldEvent.id);
+          this._updateEvents();
+        })
+        .catch((err) => alert(err));
       return;
     }
     // new Event
     if (oldEvent === null) {
       newEvent = Object.assign({}, newEvent, {id: this._eventsModel.getId()});
       this._api.addEvent(newEvent)
-        .then(() => {
-          this._eventsModel.addEvent(newEvent);
+        .then((event) => {
+          console.log(event);
+          this._eventsModel.addEvent(new EventModel(event).getEvent());
           this._updateEvents();
           this._eventIsCreating = false;
         })
