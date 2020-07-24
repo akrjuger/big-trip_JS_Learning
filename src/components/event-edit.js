@@ -208,7 +208,6 @@ export default class EventEditComponent extends AbstractSmartComponent {
   }
 
   getData() {
-    this._event.price = this.getElement().querySelector(`.event__input--price`).value;
     return this._event;
   }
 
@@ -227,6 +226,7 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._setTypeChangeHandler();
     this._setDestinationChangeHandler();
     this._setOffersChangeHandler();
+    this._setPriceChangeHandler();
   }
 
   _setTypeChangeHandler() {
@@ -253,6 +253,13 @@ export default class EventEditComponent extends AbstractSmartComponent {
       }
       this._event.destination = this._destinations[destinationIndex];
       this.rerender();
+    });
+  }
+
+  _setPriceChangeHandler() {
+    this.getElement().querySelector(`.event__input--price`).addEventListener(`change`, (evt) => {
+      this._event.price = Number(evt.target.value);
+      evt.target.value = this._event.price;
     });
   }
 

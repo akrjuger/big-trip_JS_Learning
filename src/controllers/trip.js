@@ -25,10 +25,11 @@ const getSortedEvents = (events, sortType) => {
 
 
 export default class TripController {
-  constructor(container, eventsModel) {
+  constructor(container, eventsModel, api) {
     this._container = container;
     // this._events = [];
     this._eventsModel = eventsModel;
+    this._api = api;
 
     this._eventsContollers = [];
     this._eventIsCreating = false;
@@ -123,25 +124,33 @@ export default class TripController {
   }
 
   _onDataChange(eventController, oldEvent, newEvent) {
+    // new event was not created
     if (oldEvent === null && newEvent === null) {
       eventController.destroy();
       this._eventIsCreating = false;
       return;
     }
-
+    // delete event
     if (newEvent === null) {
       this._eventsModel.deleteEvent(oldEvent.id);
       this._updateEvents();
       return;
     }
-
+    // new Event
     if (oldEvent === null) {
-      this._eventsModel.addEvent(newEvent);
-      this._updateEvents();
-      this._eventIsCreating = false;
+      newEvent = Object.assign({}, newEvent, {id: this._eventsModel.getId()});
+      this._api.addEvent(newEvent)
+        .then(() => {
+          this._eventsModel.addEvent(newEvent);
+          this._updateEvents();
+          this._eventIsCreating = false;
+        })
+        .catch((err) => {
+          alert(err);
+        });
       return;
     }
-
+    // update event
     this._eventsModel.updateEvent(oldEvent.id, newEvent);
     eventController.render(newEvent);
   }

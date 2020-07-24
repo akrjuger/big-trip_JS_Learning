@@ -2,6 +2,7 @@ import EventModel from './models/event.js';
 
 const Methods = {
   GET: `GET`,
+  POST: `POST`,
   PUSH: `PUSH`,
   DELETE: `DELETE`
 };
@@ -17,6 +18,10 @@ export default class API {
     .then((datas) => datas.map((data) => new EventModel(data).getEvent()));
   }
 
+  addEvent(event) {
+    return this._load(`points`, Methods.POST, JSON.stringify(EventModel.toRAW(event)));
+  }
+
   getDestinations() {
     return this._load(`destinations`);
   }
@@ -25,13 +30,20 @@ export default class API {
     return this._load(`offers`);
   }
 
-  _load(url, method = Methods.GET) {
+  _load(url, method = Methods.GET, body) {
     return fetch(this._endPoint + url, {
       method,
       headers: {
-        "Authorization": this._authToken
+        "Authorization": this._authToken,
+        'Content-Type': `application/json`
+      },
+      body
+    }).then((response) => {
+      if (response.status !== 200) {
+        throw new Error(response.url + ` : ` + response.status + response.statusText);
       }
-    }).then((response) => response.json());
+      return response.json();
+    });
   }
 
 }

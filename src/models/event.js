@@ -17,13 +17,21 @@ export default class EventModel {
     // this.getEvent = this.getEvent.bind(this);
   }
 
-  toJson() {
+  static toRAW(event) {
+    // const pictures = event.destination.pictures.map((picture) => {'src'})
     return {
-      'id': this._event.id,
-      'type': this._event.type.toLowerCase,
-      'date_from': this._event.startDate.toString(),
-      'date_to': this._event.endDate.toString(),
-      'base_price': this._event.price,
+      'id': event.id.toString(),
+      'type': event.type.toLowerCase(),
+      'date_from': event.startDate.toISOString(),
+      'date_to': event.endDate.toISOString(),
+      'base_price': event.price,
+      'destination': {
+        'name': event.destination.name,
+        'pictures': event.destination.pictures,
+        'description': event.destination.description
+      },
+      'offers': event.offers,
+      'is_favorite': event.isFavorite
     };
   }
 

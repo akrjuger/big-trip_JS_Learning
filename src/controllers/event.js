@@ -2,7 +2,6 @@ import EventComponent from '../components/event.js';
 import EventEditComponent from '../components/event-edit.js';
 import {renderElement, replace, remove} from '../utils/render.js';
 import {EVENT_TYPES} from '../const.js';
-import {getServices} from '../mockup/event.js';
 
 const Mode = {
   DEFAULT: `default`,
@@ -12,13 +11,15 @@ const Mode = {
 
 const DEFAULT_EVENT = {
   type: EVENT_TYPES.place[0],
-  town: `Barcelona`,
-  photos: [],
-  description: [],
+  destination: {
+    name: ``,
+    pictures: [],
+    description: ``
+  },
   startDate: new Date(),
   endDate: new Date(),
   price: 0,
-  services: getServices(),
+  offers: [],
   isFavorite: false
 };
 

@@ -11,7 +11,8 @@ import {renderElement} from './utils/render.js';
 
 const END_POINT = `https://12.ecmascript.pages.academy/big-trip/`;
 // const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip/`;
-const AUTH_TOKEN = `Basic nkfdkjndfnjkdfbiuh=`;
+// const AUTH_TOKEN = `Basic nkfdkjndfnjkdfbiuh=`;
+const AUTH_TOKEN = `Basic dkfnstqpwrzva21`;
 
 const eventsModel = new EventsModel();
 const api = new API(END_POINT, AUTH_TOKEN);
@@ -38,7 +39,7 @@ renderElement(controlsElement, menuComponent, `afterbegin`);
 const filtersController = new FiltersController(controlsElement, eventsModel);
 // filtersController.render();
 
-const tripController = new TripController(boardElement, eventsModel);
+const tripController = new TripController(boardElement, eventsModel, api);
 // tripController.render();
 // tripController.hide();
 

@@ -47,10 +47,14 @@ export default class EventsModel {
   }
 
   addEvent(event) {
-    event = Object.assign({}, event, {id: this._events.length});
+    // event = Object.assign({}, event, {id: this._events.length});
     this._events.push(event);
     this._events = sortEventsByDate(this._events);
     this._dataChangeHandler();
+  }
+
+  getId() {
+    return this._events.length;
   }
 
   setFilter(filterType) {
