@@ -3,7 +3,7 @@ import EventModel from './models/event.js';
 const Methods = {
   GET: `GET`,
   POST: `POST`,
-  PUSH: `PUSH`,
+  PUT: `PUT`,
   DELETE: `DELETE`
 };
 
@@ -20,6 +20,10 @@ export default class API {
 
   addEvent(event) {
     return this._load(`points`, Methods.POST, JSON.stringify(EventModel.toRAW(event)));
+  }
+
+  updateEvent(event) {
+    return this._load(`points/` + event.id, Methods.PUT, JSON.stringify(EventModel.toRAW(event)));
   }
 
   deleteEvent(id) {

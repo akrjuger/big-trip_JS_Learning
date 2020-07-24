@@ -157,6 +157,15 @@ export default class TripController {
       return;
     }
     // update event
+    this._api.updateEvent(newEvent)
+      .then((event) => {
+        newEvent = new EventModel(event).getEvent();
+        this._eventsModel.updateEvent(oldEvent.id, newEvent);
+        eventController.render(newEvent);
+      })
+      .catch((err) => {
+        alert(err);
+      });
     this._eventsModel.updateEvent(oldEvent.id, newEvent);
     eventController.render(newEvent);
   }
