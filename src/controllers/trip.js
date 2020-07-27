@@ -138,7 +138,7 @@ export default class TripController {
           this._eventsModel.deleteEvent(oldEvent.id);
           this._updateEvents();
         })
-        .catch((err) => alert(err));
+        .catch(() => eventController.shake());
       return;
     }
     // new Event
@@ -146,14 +146,11 @@ export default class TripController {
       newEvent = Object.assign({}, newEvent, {id: this._eventsModel.getId()});
       this._api.addEvent(newEvent)
         .then((event) => {
-          console.log(event);
           this._eventsModel.addEvent(new EventModel(event).getEvent());
           this._updateEvents();
           this._eventIsCreating = false;
         })
-        .catch((err) => {
-          alert(err);
-        });
+        .catch(() => eventController.shake());
       return;
     }
     // update event
@@ -162,12 +159,11 @@ export default class TripController {
         newEvent = new EventModel(event).getEvent();
         this._eventsModel.updateEvent(oldEvent.id, newEvent);
         eventController.render(newEvent);
+        eventController.setDefaultView();
       })
-      .catch((err) => {
-        alert(err);
-      });
-    this._eventsModel.updateEvent(oldEvent.id, newEvent);
-    eventController.render(newEvent);
+      .catch(() => eventController.shake());
+    // this._eventsModel.updateEvent(oldEvent.id, newEvent);
+    // eventController.render(newEvent);
   }
 
   _updateEvents() {

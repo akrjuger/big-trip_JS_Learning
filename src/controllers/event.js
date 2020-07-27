@@ -72,12 +72,12 @@ export default class EventController {
 
     this._eventEditComponent.setSubmitHandler((evt) => {
       evt.preventDefault();
+      this._eventEditComponent.setSavingStatus();
       if (this._mode === Mode.ADD) {
         this._onDataChange(this, null, this._eventEditComponent.getData());
         return;
       }
       this._onDataChange(this, event, this._eventEditComponent.getData());
-      this._replaceEditComponent();
     });
 
     this._eventEditComponent.setFavoriteButtonClickHandler(() => {
@@ -87,6 +87,7 @@ export default class EventController {
 
     this._eventEditComponent.setDeleteButtonClickHandler(() => {
       if (this._mode === Mode.EDIT) {
+        this._eventEditComponent.setDeleteStatus();
         this._onDataChange(this, event, null);
       } else {
         this._onDataChange(this, null, null);
@@ -119,6 +120,13 @@ export default class EventController {
     if (this._mode === Mode.ADD) {
       this.destroy();
     }
+  }
+
+  shake() {
+    this._eventEditComponent.getElement().classList.add(`shake`);
+    setTimeout(() => this._eventEditComponent.getElement().classList.remove(`shake`), 1000);
+
+    this._eventEditComponent.setNormalStatus();
   }
 
   destroy() {

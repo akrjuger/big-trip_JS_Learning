@@ -222,6 +222,38 @@ export default class EventEditComponent extends AbstractSmartComponent {
     this._applyFlatpickr();
   }
 
+  setSavingStatus() {
+    const saveButton = this.getElement().querySelector(`.event__save-btn`);
+    saveButton.innerText = `Saving...`;
+    saveButton.disabled = true;
+    this._addOverlay();
+  }
+
+  setDeleteStatus() {
+    const deleteButton = this.getElement().querySelector(`.event__reset-btn`);
+    deleteButton.innerText = `Deleting...`;
+    deleteButton.disabled = true;
+    this._removeOverlay();
+  }
+
+  setNormalStatus() {
+    const saveButton = this.getElement().querySelector(`.event__save-btn`);
+    saveButton.innerText = `Save`;
+    saveButton.disabled = false;
+    const deleteButton = this.getElement().querySelector(`.event__reset-btn`);
+    deleteButton.innerText = `Delete`;
+    deleteButton.disabled = false;
+    this._removeOverlay();
+  }
+
+  _addOverlay() {
+    this.getElement().classList.add(`disabled-overlay`);
+  }
+
+  _removeOverlay() {
+    this.getElement().classList.remove(`disabled-overlay`);
+  }
+
   _subscribeOnEvents() {
     this._setTypeChangeHandler();
     this._setDestinationChangeHandler();
